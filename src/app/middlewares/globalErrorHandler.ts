@@ -17,7 +17,7 @@ const globalErrorHandler: ErrorRequestHandler = (
   error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   config.env === 'development'
     ? console.log(`🐱‍🏍 globalErrorHandler ~~`, { error })
@@ -39,29 +39,32 @@ const globalErrorHandler: ErrorRequestHandler = (
     errorMessages = simplifiedError.errorMessages;
   } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
     const simplifiedError = handleClientError(error);
+
     statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
+    // message = simplifiedError.message; Changed by me.
+    message = error.message;
     errorMessages = simplifiedError.errorMessages;
   } else if (error instanceof ApiError) {
     statusCode = error?.statusCode;
     message = error.message;
     errorMessages = error?.message
       ? [
-        {
-          path: '',
-          message: error?.message,
-        },
-      ]
+          {
+            path: '',
+            message: error?.message,
+          },
+        ]
       : [];
   } else if (error instanceof Error) {
+    // console.log("error);
     message = error?.message;
     errorMessages = error?.message
       ? [
-        {
-          path: '',
-          message: error?.message,
-        },
-      ]
+          {
+            path: '',
+            message: error?.message,
+          },
+        ]
       : [];
   }
 
